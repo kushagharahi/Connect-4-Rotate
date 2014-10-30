@@ -30,7 +30,9 @@ public class MainApplet extends Applet implements MouseListener, MouseMotionList
 	int turn = 0;
 	boolean win;
 	int player = 0;
-	//boolean
+	boolean isValid = false;
+	int row = -1;
+	int column = -1;
 	
 	public void init()
 	{
@@ -56,6 +58,8 @@ public class MainApplet extends Applet implements MouseListener, MouseMotionList
 		}
 		drawGrid(g);
 		drawPieces(g);
+		if(!win)
+			drawVaildMoveRect(g, row, column, isValid);
 		repaint();
 	}
 	
@@ -95,9 +99,18 @@ public class MainApplet extends Applet implements MouseListener, MouseMotionList
 		
 	}
 	
-	public void drawVaildMoveRect(Graphics g, int row, int column)
+	public void drawVaildMoveRect(Graphics g, int row, int column, boolean vaild)
 	{
-		
+		if(vaild)
+		{
+			g.setColor(green);
+			g.fillRect(row*gridX, column*gridY+spaceTop, gridX, gridY);
+		}
+		else
+		{
+			g.setColor(red);
+			g.fillRect(row*gridX, spaceTop, gridX, appletHeight);
+		}
 	}
 	
 	public void getWin(int row, int column) //todo sort tests by most likely to least likely
@@ -261,8 +274,9 @@ public class MainApplet extends Applet implements MouseListener, MouseMotionList
 					{
 						if(turn % 2 == 0)
 						{
-							addCircle(x-1,openSpace, 1); //todo add player numbers
+							addCircle(x-1,openSpace, 1); 
 							getWin(x-1, openSpace);
+							
 						}
 						else
 						{
@@ -300,26 +314,48 @@ public class MainApplet extends Applet implements MouseListener, MouseMotionList
 
     public void mouseClicked(MouseEvent e)
     {
-
-    }
-
-	public void mouseMoved(MouseEvent e)
-	{
-/*		for(int x = 0; x <= rows; x++)
+    	for(int x = 0; x <= rows; x++)
 			if(e.getX() < x*gridX)
 			{	
 				int openSpace = nextOpenSpace(x-1);
 				if(openSpace != -1)
 				{
-					
+					isValid = true;
+					row = x-1;
+					column = openSpace;
 					break;
 				}
 				else 
 				{
-					
+					isValid = false;
+					row = x-1;
+					column = -1;
 					break;
 				}
-			}*/
+			}
+    }
+
+	public void mouseMoved(MouseEvent e)
+	{
+		for(int x = 0; x <= rows; x++)
+			if(e.getX() < x*gridX)
+			{	
+				int openSpace = nextOpenSpace(x-1);
+				if(openSpace != -1)
+				{
+					isValid = true;
+					row = x-1;
+					column = openSpace;
+					break;
+				}
+				else 
+				{
+					isValid = false;
+					row = x-1;
+					column = -1;
+					break;
+				}
+			}
     }
 
     public void mouseDragged(MouseEvent e)
