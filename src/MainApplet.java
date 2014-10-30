@@ -165,7 +165,7 @@ public class MainApplet extends Applet implements MouseListener, MouseMotionList
 			}
 		
 			System.out.println("Right diag test: rStarting: " + rStarting + " cStarting: " + cStarting);
-			while((cStarting < columns) && (rStarting < rows))
+			while((cStarting < columns) && (rStarting > 0))
 			{
 				System.out.println("Right diag test: rStarting: " + rStarting + " cStarting: " + cStarting);
 				if(spaces[rStarting][cStarting] == player)
