@@ -13,26 +13,26 @@ import java.awt.event.MouseMotionListener;
 public class MainApplet extends Applet implements MouseListener, MouseMotionListener {
 	
 	
-	final int appletWidth = 701;
-	final int appletHeight = 601;
-	final int rows = 7;
-	final int columns = 6;
-	final int gridX = appletWidth/rows;
-	final int gridY = appletHeight/columns;
-	final int spaceTop = appletHeight/(columns*2);
+	private final int appletWidth = 701;
+	private final int appletHeight = 601;
+	private int rows = 7;
+	private int columns = 6;
+	private final int gridX = appletWidth/rows;
+	private final int gridY = appletHeight/columns;
+	private final int spaceTop = appletHeight/(columns*2);
 	int[][] spaces = new int[rows][columns];
 	private Image dbImage;	
 	private Graphics dbg;
-	Color green = new Color(51, 255, 255, 128);
-	Color red = new Color(255, 0,0, 128);
-	Color black = new Color(0, 0, 0,  255);
-	Color yellow = new Color(255, 255, 0, 255);
-	int turn = 0;
-	boolean win;
-	int player = 0;
-	boolean isValid = false;
-	int row = -1;
-	int column = -1;
+	private final Color green = new Color(0, 255, 0, 150);
+	private final Color red = new Color(255, 0,0, 150);
+	private final Color black = new Color(0, 0, 0,  255);
+	private final Color yellow = new Color(255, 255, 0, 255);
+	private int turn = 0;
+	private boolean win;
+	private int player = 0;
+	private boolean isValid = false;
+	private int row = -1;
+	private int column = -1;
 	
 	public void init()
 	{
@@ -95,6 +95,11 @@ public class MainApplet extends Applet implements MouseListener, MouseMotionList
 	}
 	
 	public void animatePieces(Graphics g)
+	{
+		
+	}
+	
+	public void rotateLeft90(int rows, int columns, int [][]spaces)
 	{
 		
 	}
