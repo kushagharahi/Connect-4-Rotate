@@ -94,12 +94,27 @@ public class MainApplet extends Applet implements MouseListener, MouseMotionList
 			}
 	}
 	
+	public void drawButtons(Graphics g)
+	{
+		
+	}
+	
 	public void animatePieces(Graphics g)
 	{
 		
 	}
 	
 	public void rotateLeft90(int rows, int columns, int [][]spaces)
+	{
+		
+	}
+	
+	public void rotateRight90(int rows, int columns, int [][]spaces)
+	{
+		
+	}
+	
+	public void flipBoard(int spaces[][])
 	{
 		
 	}
