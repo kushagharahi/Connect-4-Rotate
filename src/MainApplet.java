@@ -5,40 +5,75 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+
+import javax.swing.ImageIcon;
 
 public class MainApplet extends Applet implements MouseListener, MouseMotionListener {
 	
 	
 	private final int appletWidth = 701;
 	private final int appletHeight = 601;
-	private int rows = 7;
-	private int columns = 6;
-	private final int gridX = appletWidth/rows;
-	private final int gridY = appletHeight/columns;
-	private final int spaceTop = appletHeight/(columns*2);
-	int[][] spaces = new int[rows][columns];
-	private Image dbImage;	
-	private Graphics dbg;
 	private final Color green = new Color(0, 255, 0, 150);
 	private final Color red = new Color(255, 0,0, 150);
 	private final Color black = new Color(0, 0, 0,  255);
 	private final Color yellow = new Color(255, 255, 0, 255);
+	
+	private int rows = 7;
+	private int columns = 6;
+	private int[][] spaces;
+	private int gridX;
+	private int gridY;
+	private int spaceTop;
+	private int paddingTop;
+	private int paddingBottom;
+	private Rectangle leftBox;
+	private Rectangle rightBox;
+	private Image leftIco;
+	private Image rightIco;
+	private Image dbImage;	
+	private Graphics dbg;
 	private int turn = 0;
 	private boolean win;
 	private int player = 0;
 	private boolean isValid = false;
 	private int row = -1;
 	private int column = -1;
+	private boolean leftHover = false;
+	private boolean rightHover = false;
+	private boolean leftIsClicked = false;
+	private boolean rightIsClicked = false;
 	
 	public void init()
 	{
 		setSize(appletWidth, appletHeight+spaceTop);
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
+		reInitalizeVars();
+	}
+
+	public void reInitalizeVars()
+	{
+		spaces = new int[rows][columns];
+		spaceTop = appletHeight/(columns*2);
+		gridX = appletWidth/rows;
+		gridY = (appletHeight-spaceTop)/columns;
+		if(gridX > gridY)
+			gridX = gridY;
+		else
+			gridY = gridX;
+		
+		paddingTop = 3;
+		paddingBottom = spaceTop-paddingTop*2;
+		leftBox = new Rectangle(paddingTop, paddingTop, paddingBottom, paddingBottom);
+		rightBox = new Rectangle(paddingTop*2+paddingBottom, paddingTop, paddingBottom, paddingBottom);
+		leftIco = new ImageIcon(this.getClass().getResource("/res/icons/left.png")).getImage();
+		rightIco = new ImageIcon(this.getClass().getResource("/res/icons/right.png")).getImage();
 	}
 	
 	public void paint(Graphics g)
@@ -57,6 +92,7 @@ public class MainApplet extends Applet implements MouseListener, MouseMotionList
 			System.out.println("Player " + player + " wins");
 		}
 		drawGrid(g);
+		drawButtons(g);
 		drawPieces(g);
 		if(!win)
 			drawVaildMoveRect(g, row, column, isValid);
@@ -67,12 +103,12 @@ public class MainApplet extends Applet implements MouseListener, MouseMotionList
 	{
 		for(int x = 0; x <= rows; x++)
 		{
-			g.drawLine(x*gridX, spaceTop, x*gridX, appletHeight+spaceTop);
+			g.drawLine(x*gridX, spaceTop, x*gridX, gridX*columns+spaceTop);
 		}
 		//drawLine x1, y1, x2, y2
 		for(int y = 0; y <= columns; y++)
 		{
-			g.drawLine(0, y*gridY+spaceTop, appletWidth, y*gridY+spaceTop);
+			g.drawLine(0, y*gridY+spaceTop, gridY*rows, y*gridY+spaceTop);
 		}
 	}
 	
@@ -96,7 +132,8 @@ public class MainApplet extends Applet implements MouseListener, MouseMotionList
 	
 	public void drawButtons(Graphics g)
 	{
-		
+		g.drawImage(leftIco, paddingTop, paddingTop, paddingBottom, paddingBottom, null);
+		g.drawImage(rightIco, paddingTop*2+paddingBottom, paddingTop, paddingBottom, paddingBottom, null);
 	}
 	
 	public void animatePieces(Graphics g)
@@ -104,12 +141,20 @@ public class MainApplet extends Applet implements MouseListener, MouseMotionList
 		
 	}
 	
-	public void rotateLeft90(int rows, int columns, int [][]spaces)
+	public void rotateLeft90()
 	{
-		
+		int tempRows = rows;
+		int tempColumns = columns;
+		rows = columns;
+		columns = tempRows;
+		int temp1[][] = spaces;
+		reInitalizeVars();		
+		for(int x = 0; x < tempColumns; x++)
+			for(int y = 0; y < tempRows; y++)
+				spaces[x][y] = temp1[y][x];		
 	}
 	
-	public void rotateRight90(int rows, int columns, int [][]spaces)
+	public void rotateRight90()
 	{
 		
 	}
@@ -285,6 +330,17 @@ public class MainApplet extends Applet implements MouseListener, MouseMotionList
 	public void mousePressed(MouseEvent e)
 	{
 		if(!win)
+			if(leftBox.contains(new Point(e.getX(),e.getY())))
+			{
+				leftIsClicked = true;
+				rotateLeft90();
+			}
+			else if(rightBox.contains(new Point(e.getX(),e.getY())))
+			{
+				rightIsClicked = true;
+				rotateRight90();
+				repaint();
+			}else
 			for(int x = 0; x <= rows; x++)
 				if(e.getX() < x*gridX)
 				{	
@@ -312,8 +368,7 @@ public class MainApplet extends Applet implements MouseListener, MouseMotionList
 						break;
 					}
 				}
-				
-					
+
 		System.out.println("mouse clicked @ " + e.getX() + " " + e.getY());
     }
 	
@@ -376,6 +431,16 @@ public class MainApplet extends Applet implements MouseListener, MouseMotionList
 					break;
 				}
 			}
+		if(leftBox.contains(new Point(e.getX(),e.getY())))
+    	{
+    		leftHover = true;
+    		
+    	}
+    	
+    	if(rightBox.contains(new Point(e.getX(),e.getY())))
+    	{
+    		rightHover = true;
+    	}
     }
 
     public void mouseDragged(MouseEvent e)
